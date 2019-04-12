@@ -1,6 +1,6 @@
 .headers on
 .mode column
-select c.name carrier, max(f.price) max_price
+select c.name as carrier, max(f.price) as max_price
     from FLIGHTS as f
     inner join CARRIERS as c
         on f.carrier_id = c.cid

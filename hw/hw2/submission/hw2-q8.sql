@@ -1,6 +1,6 @@
 .headers on
 .mode column
-select c.name name, sum(f.departure_delay) delay
+select c.name, sum(f.departure_delay) as delay
     from FLIGHTS as f
     inner join CARRIERS as c
         on f.carrier_id = c.cid

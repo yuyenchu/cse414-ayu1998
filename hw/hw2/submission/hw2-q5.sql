@@ -1,7 +1,7 @@
 .headers on
 .mode column
-select c.name name, 
-        100*cast(sum(f.canceled) as real)/cast(count(distinct f.fid) as real) percent
+select c.name, 
+        100*avg(f.canceled) as percent
     from(select * from FLIGHTS as F
             where F.origin_city = 'Seattle WA') as f
     inner join CARRIERS as c

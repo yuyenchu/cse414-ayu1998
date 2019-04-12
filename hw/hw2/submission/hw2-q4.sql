@@ -1,6 +1,6 @@
 .headers on
 .mode column
-select distinct c.name name
+select distinct c.name
     from FLIGHTS as f
     inner join CARRIERS as c
         on f.carrier_id = c.cid
