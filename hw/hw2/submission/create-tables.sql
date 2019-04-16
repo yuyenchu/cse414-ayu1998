@@ -1,9 +1,9 @@
 create table FLIGHTS (
 		fid int primary key, 
-		month_id int,        -- 1-12
+		month_id int foreign key references MONTHS,        -- 1-12
 		day_of_month int,    -- 1-31 
-		day_of_week_id int,  -- 1-7, 1 = Monday, 2 = Tuesday, etc
-		carrier_id varchar(7), 
+		day_of_week_id int foreign key references WEEKDAYS,  -- 1-7, 1 = Monday, 2 = Tuesday, etc
+		carrier_id varchar(7) foreign key references CARRIERS, 
 		flight_num int,
 		origin_city varchar(34), 
 		origin_state varchar(47), 
