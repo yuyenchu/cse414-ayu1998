@@ -127,33 +127,37 @@ Often it is easier to import data from within the same cloud (Azure), as opposed
 Please run the following query, which creates tables in your database and runs a bulk import to fill the tables from the csv files in the public blob:
 
 ```sql
-CREATE EXTERNAL DATA SOURCE cse344blob
+CREATE EXTERNAL DATA SOURCE cse414blob
 WITH (  TYPE = BLOB_STORAGE,
-        LOCATION = 'https://cse3442019wihw3.blob.core.windows.net/hw3share'
+        LOCATION = 'https://cse4142019sp.blob.core.windows.net/cse4142019sp'
 );
 
 bulk insert Carriers from 'carriers.csv'
 with (ROWTERMINATOR = '0x0a',
-DATA_SOURCE = 'cse344blob', FORMAT='CSV', CODEPAGE = 65001, --UTF-8 encoding
+DATA_SOURCE = 'cse414blob', FORMAT='CSV', CODEPAGE = 65001, --UTF-8 encoding
 FIRSTROW=1,TABLOCK);
 
 bulk insert Months from 'months.csv'
 with (ROWTERMINATOR = '0x0a',
-DATA_SOURCE = 'cse344blob', FORMAT='CSV', CODEPAGE = 65001, --UTF-8 encoding
+DATA_SOURCE = 'cse414blob', FORMAT='CSV', CODEPAGE = 65001, --UTF-8 encoding
 FIRSTROW=1,TABLOCK);
 
 bulk insert Weekdays from 'weekdays.csv'
 with (ROWTERMINATOR = '0x0a',
-DATA_SOURCE = 'cse344blob', FORMAT='CSV', CODEPAGE = 65001, --UTF-8 encoding
+DATA_SOURCE = 'cse414blob', FORMAT='CSV', CODEPAGE = 65001, --UTF-8 encoding
 FIRSTROW=1,TABLOCK);
 ```
+
+**NOTE**: The following import will often take more than 5 minutes. This means
+you will need to download DataGrip and perform the query from there as the Azure
+SQL query editor has a maximum timeout of 5 minutes.
 
 ```sql
 -- Import for the large Flights table
 -- This last import might take a little under 5 minutes on the provided server settings
 bulk insert Flights from 'flights-small.csv'
 with (ROWTERMINATOR = '0x0a',
-DATA_SOURCE = 'cse344blob', FORMAT='CSV', CODEPAGE = 65001, --UTF-8 encoding
+DATA_SOURCE = 'cse414blob', FORMAT='CSV', CODEPAGE = 65001, --UTF-8 encoding
 FIRSTROW=1,TABLOCK);
 ```
 
@@ -180,11 +184,11 @@ Here's the main page and some steps to get you to the upload:
 
 ``` NOTE: The picture corresponds to cse414-18au, but for us it should say cse414-19sp instead```
 
-![datagrip schema](./imgs/datagrip1.png)
+![datagrip schema](./figs/datagrip1.png)
 
 4. Now your tables should be visible in the drop down box.
 
-![datagrip tables](./imgs/datagrip2.png)
+![datagrip tables](./figs/datagrip2.png)
 
 5. Now you can import the csvs by right clicking the table to want to upload and finding the .csv file.
    [https://www.jetbrains.com/datagrip/features/importexport.html](https://www.jetbrains.com/datagrip/features/importexport.html)
