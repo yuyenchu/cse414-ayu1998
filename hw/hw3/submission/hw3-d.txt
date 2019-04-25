@@ -1,0 +1,32 @@
+This is my first time using such kind of service, 
+there are so many functions in Azure that I haven't explored yet. 
+It's really more convinent to have those GUI on the website and VScode rather than typing in the terminal,
+but I actually didn't use much of the functions in this assignment.
+I think it's not a bad idea to use DBMS cloud service, 
+but if the data goes even bigger,
+we might need our own server due to the speed of transmitting data.
+Also, since this is just an class assignment, 
+we don't have to worry a lot,
+but if it's a company project,
+there would be more things to be worried about.
+For example, security could be a problem.
+First, the cloud service is run by microsoft, 
+so there would be risks of data leak from them, 
+such as backdoors created by the developer.
+Second, if someone hack into the server,
+we cannot directly control the server since it's run by others.
+Third, if the DBMS goes pulic, 
+we might need another way to regulate and record people accessing it.
+Also, when microsoft or others whose using their service get attacked,
+the data we stored on the cloud may also got affected,
+so how to sotre backups could be a issue to discuss.
+We usually think these kind of prolem might not be a big deal 
+because our work isn't "that" important and the "faith" we put in microsoft,
+but as the importance and resource put in the project grows, 
+there would be more things to consider.
+So personally saying,
+if I got the time and resource,
+I might prefer setting up my own server becuase I don't want to leave the control to others.
+But this service is a really good idea for smaller projects, new developers, or companies which lack of resource,
+it gives them what they need to complete their projects,
+which would eventually help them more likely to achieve their goals.

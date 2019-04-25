@@ -12,3 +12,4 @@ select distinct f.c as city
                                 from FLIGHTS as F
                                 where F.origin_city = 'Seattle WA')                         
     order by city asc;
+    --there will be 4 result if use origin_city as collection of all cities, 3 result if use dest_city
