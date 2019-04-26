@@ -1,0 +1,10 @@
+select P.p1 as p1, max(P.y) as z 
+from    (select pc1.p1 as p1, count(*) as y
+        from person_living as pl
+        inner join parent_child as pc1
+            on pl.x = pc1.p1
+        inner join (select c.p1 as p3, c.p2 as p4
+                    from parent_child as c) as pc2
+            on pc1.p2 = pc2.p3
+        group by pc1.p1, pc2.p3) as P
+group by P.p1;
