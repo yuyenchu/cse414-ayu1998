@@ -24,7 +24,7 @@
 
 // NOTE: if you want to redirect the output to console
 // you can use the syntax:
-.output p0(IO=stdout)
+// .output p0(IO=stdout)
 p0(x,d) :- parent_child("Priscilla",x), person(x,d).
 
 // NOTE: DO NOT remove the declarations or the .output statements below.
@@ -32,30 +32,92 @@ p0(x,d) :- parent_child("Priscilla",x), person(x,d).
 // have not defined the rules for those relations
 /************* problem 1 **************/
 .decl p1(x:PersonType,d:DescriptionType)
+.decl D(x:PersonType,y:PersonType)
+.decl C1(n:number)
+D(x,y) :- parent_child(x,y).
+D(x,z) :- D(x,y), parent_child(y,z).
+p1(x,d) :- D("Priscilla",x), person(x,d).
+
+C1(n) :- n = count : {p1(_,_)}.
 
 .output p1(filename="hw4-1.ans")
-.output p1(IO=stdout)
+// .output p1(IO=stdout)
+.output C1(IO=stdout)
 
 /************* problem 2 **************/
 .decl p2(x:PersonType, d:DescriptionType, m:number)
+.decl T1(p:PersonType, c:number)
+.decl T2(p:PersonType, c:number)
+.decl M1(n:number)
+.decl M2(n:number)
+.decl C2(n:number)
+T1(p,c) :- male(p), parent_child(p,_), c = count : { parent_child(p,_) }.
+T2(p,c) :- female(p), parent_child(p,_), c = count : { parent_child(p,_) }.
+M1(n) :- n = max c : T1(_,c).
+M2(n) :- n = max c : T2(_,c).
+p2(x,d,m) :- T1(x,m), person(x,d), M1(m); T2(x,m), person(x,d), M2(m).
+
+C2(n) :- n = count : {p2(_,_,_)}.
 
 .output p2(filename="hw4-2.ans")
-.output p2(IO=stdout)
+// .output p2(IO=stdout)
+.output C2(IO=stdout)
 
 /************* problem 3 **************/
 .decl p3(x:PersonType, m1:number, m2:number)
+.decl temp(x:PersonType, m1:number, m2:number)
+.decl C3(n:number)
+temp(x,m1,m2) :- person(x,_), !parent_child(_,x), m1 = 0, m2 = 0.
+temp(x,m1,m2) :-  male(x2), temp(x2,m3,m4), parent_child(x2,x), 
+                female(x3), temp(x3,m5,m6), parent_child(x3,x),
+                m1 = m5+1, m2 = m6+1, m5<=m3, m4<=m6;//case 1
+                male(x2), temp(x2,m3,m4), parent_child(x2,x), 
+                female(x3), temp(x3,m5,m6), parent_child(x3,x),
+                m1 = m3+1, m2 = m6+1, m5>=m3, m4<=m6;//case 2
+                male(x2), temp(x2,m3,m4), parent_child(x2,x), 
+                female(x3), temp(x3,m5,m6), parent_child(x3,x),
+                m1 = m5+1, m2 = m4+1, m5<=m3, m4>=m6;//case 3
+                male(x2), temp(x2,m3,m4), parent_child(x2,x), 
+                female(x3), temp(x3,m5,m6), parent_child(x3,x),
+                m1 = m3+1, m2 = m4+1, m5>=m3, m4>=m6.//case 4
+p3(x,m1,m2) :-  temp(x,m1,m2), person_living(x).
+
+C3(n) :- n = count : {p3(_,_,_)}.
 
 .output p3(filename="hw4-3.ans")
-.output p3(IO=stdout)
+// .output p3(IO=stdout)
+.output C3(IO=stdout)
 
-/************* problem 4 **************/
+// /************* problem 4 **************/
 .decl p4(x:PersonType)
+.decl temp2(x:PersonType, y:PersonType)
+.decl temp3(x:PersonType, y:PersonType)
+.decl T3(p:PersonType, c:number)
+.decl l(n:number)
+.decl C4(n:number)
+temp2(x,y) :- female(x), parent_child(x,y), person_living(y).
+temp2(x,y) :- female(x), parent_child(x,y), temp2(y,_).
+temp2(x,z) :- temp2(x,y),temp2(y,z).//some probblem
+temp3(x,y) :- temp2(x,y), person_living(y).
+l(n) :- n = count : {person_living(_)}.
+T3(p,c) :- temp3(p,_), c = count : {temp3(p,_)}.
+p4(x) :- l(c), T3(x,c).
+
+C4(n) :- n = count : {p4(_)}.
+
 
 .output p4(filename="hw4-4.ans")
-.output p4(IO=stdout)
+// .output p4(IO=stdout)
+// .output T3(IO=stdout)
+.output C4(IO=stdout)
 
 /************* problem 5 **************/
 .decl p5(x:PersonType)
+.decl C5(n:number)
+p5(x) :- temp2(x,_), !parent_child(_,x).
+
+C5(n) :- n = count : {p5(_)}.
 
 .output p5(filename="hw4-5.ans")
-.output p5(IO=stdout)
+// .output p5(IO=stdout)
+.output C5(IO=stdout)

@@ -1,0 +1,7 @@
+SELECT a.p
+FROM   person_living AS a, male AS b
+WHERE  a.p = b.name AND 
+       NOT EXISTS (SELECT * 
+                   FROM   parent_child AS c, female AS d 
+                   WHERE  c.p1=d.name AND c.p2=a.p)
+
