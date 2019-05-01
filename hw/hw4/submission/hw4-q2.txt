@@ -5,3 +5,8 @@ WHERE  a.p = b.name AND
                    FROM   parent_child AS c, female AS d 
                    WHERE  c.p1=d.name AND c.p2=a.p)
 
+T1(name,p1,p2) = female(name) Join[name=p1] parent_child(p1,p2)
+T2(p,name) = person_living(p) Join[name=p] male(name)
+T3(p2) = Project[p2](T1)
+T4(name) = Project[name](T2)
+T5(name) = Differece T4(name) - T3(p2)
