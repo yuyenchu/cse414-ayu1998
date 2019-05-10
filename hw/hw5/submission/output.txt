@@ -1,0 +1,124 @@
+{
+	"requestID": "04aefdf8-a759-4884-9b9c-52a63ac01a9a",
+	"signature": "*",
+	"results": [ {
+		"mountains" : [
+			{
+				"mountain" : "Kasbek"
+			}
+		],
+		"seas" : [
+			{
+				"sea" : "Black Sea"
+			}
+		],
+		"first_country" : "Russia",
+		"second_country" : "Georgia"
+	}, {
+		"mountains" : [
+			{
+				"mountain" : "Sulitjelma"
+			}
+		],
+		"seas" : [
+			{
+				"sea" : "Skagerrak"
+			}
+		],
+		"first_country" : "Sweden",
+		"second_country" : "Norway"
+	}, {
+		"mountains" : [
+			{
+				"mountain" : "Vignemale"
+			}
+		],
+		"seas" : [
+			{
+				"sea" : "Mediterranean Sea"
+			},
+			{
+				"sea" : "Atlantic Ocean"
+			}
+		],
+		"first_country" : "France",
+		"second_country" : "Spain"
+	}, {
+		"mountains" : [
+			{
+				"mountain" : "Llullaillaco"
+			},
+			{
+				"mountain" : "Ojos del Salado"
+			}
+		],
+		"seas" : [
+			{
+				"sea" : "Atlantic Ocean"
+			}
+		],
+		"first_country" : "Chile",
+		"second_country" : "Argentina"
+	}, {
+		"mountains" : [
+			{
+				"mountain" : "Mt St.Elias"
+			},
+			{
+				"mountain" : "Mt Bona"
+			},
+			{
+				"mountain" : "Mt Fairweather"
+			}
+		],
+		"seas" : [
+			{
+				"sea" : "Arctic Ocean"
+			},
+			{
+				"sea" : "Atlantic Ocean"
+			},
+			{
+				"sea" : "Pacific Ocean"
+			}
+		],
+		"first_country" : "United States",
+		"second_country" : "Canada"
+	}, {
+		"mountains" : [
+			{
+				"mountain" : "Mont Blanc"
+			}
+		],
+		"seas" : [
+			{
+				"sea" : "Mediterranean Sea"
+			}
+		],
+		"first_country" : "Italy",
+		"second_country" : "France"
+	}, {
+		"mountains" : [
+			{
+				"mountain" : "Changbai Shan"
+			}
+		],
+		"seas" : [
+			{
+				"sea" : "Yellow Sea"
+			}
+		],
+		"first_country" : "China",
+		"second_country" : "North Korea"
+	} ]
+	,
+	"plans":{},
+	"status": "success",
+	"metrics": {
+		"elapsedTime": "275.220998ms",
+		"executionTime": "273.69755ms",
+		"resultCount": 7,
+		"resultSize": 1539,
+		"processedObjects": 512
+	}
+}

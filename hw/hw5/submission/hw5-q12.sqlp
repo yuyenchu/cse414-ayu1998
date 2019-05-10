@@ -1,0 +1,19 @@
+SELECT distinct y1.name as first_country, y2.name as second_country, M as mountains, S as seas
+FROM hw5index.mountain as m, split(m.`-country`," ") as code11, split(m.`-country`," ") as code12,
+     hw5index.sea as s, split(s.`-country`," ") as code21, split(s.`-country`," ") as code22,
+     hw5index.country as y1, hw5index.country as y2
+LET M = (SELECT m2.name as mountain
+         FROM hw5index.mountain as m2, split(m2.`-country`," ") as mcode1, split(m2.`-country`," ") as mcode2
+         WHERE  y1.`-car_code` = mcode1
+            AND y2.`-car_code` = mcode2),
+    S = (SELECT s2.name as sea
+         FROM hw5index.sea as s2, split(s2.`-country`," ") as scode1, split(s2.`-country`," ") as scode2
+         WHERE  y1.`-car_code` = scode1
+            AND y2.`-car_code` = scode2
+            AND y1.`-car_code` > y2.`-car_code`)
+WHERE   code11 > code12
+    AND code21 > code22
+    AND code11 = code21
+    AND code12 = code22
+    AND y1.`-car_code` = code11
+    AND y2.`-car_code` = code12;

@@ -1,0 +1,6 @@
+SELECT y.`-car_code` as country_code, y.name as country_name, S as seas
+FROM hw5.world x, x.mondial.country as y
+LET S = (SELECT s.name as sea, s.height as height
+         FROM hw5.world x2, x2.mondial.sea as m, split(s.`-country`," ") as code
+         WHERE y.`-car_code` = code)
+WHERE ARRAY_COUNT(S) >= 2;

@@ -1,0 +1,10 @@
+SELECT distinct y1.name as first_country, y2.name as second_country
+FROM hw5.world x, x.mondial.mountain as m, split(m.`-country`," ") as code11, split(m.`-country`," ") as code12,
+     x.mondial.sea as s, split(s.`-country`," ") as code21, split(s.`-country`," ") as code22,
+     x.mondial.country as y1, x.mondial.country as y2
+WHERE   code11 > code12
+    AND code21 > code22
+    AND code11 = code21
+    AND code12 = code22
+    AND y1.`-car_code` = code11
+    AND y2.`-car_code` = code12;

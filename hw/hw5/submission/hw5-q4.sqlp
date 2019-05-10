@@ -1,0 +1,7 @@
+SELECT X.t as ethnic_group, COUNT(X.c) as num_countries, SUM(X.p) as total_population
+    FROM (SELECT z.`#text` as t, float(z.`-percentage`)*float(y.population)/100 as p, y.name as c
+          FROM hw5.world as x, x.mondial.country as y, 
+                    (CASE  WHEN y.ethnicgroups IS missing THEN []
+                        WHEN is_array(y.ethnicgroups) THEN y.ethnicgroups
+                        ELSE [y.ethnicgroups] END) as z) as X
+GROUP by X.t;

@@ -1,0 +1,5 @@
+SELECT y.`-car_code` as country_code, y.name as country_name, M as mountains
+FROM hw5.world x, x.mondial.country as y
+LET M = (SELECT m.name as mountain, m.height as height
+         FROM hw5.world x2, x2.mondial.mountain as m, split(m.`-country`," ") as code
+         WHERE y.`-car_code` = code);
