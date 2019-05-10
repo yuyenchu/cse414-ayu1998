@@ -8,3 +8,11 @@ WHERE   code11 > code12
     AND code12 = code22
     AND y1.`-car_code` = code11
     AND y2.`-car_code` = code12;
+/*
+"metrics": {
+    "elapsedTime": "258.261745ms",
+    "executionTime": "256.820009ms",
+    "resultCount": 7,
+    "resultSize": 460,
+    "processedObjects": 512
+}*/
