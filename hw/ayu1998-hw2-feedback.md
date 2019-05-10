@@ -1,8 +1,8 @@
-# CSE 344 Homework 2: Basic SQL Queries
+# CSE 414 Homework 2: Basic SQL Queries
 
 UW Net ID: ayu1998
 
-Total: 84
+Total: 86
  / 100
 
 ---
@@ -37,4 +37,4 @@ Create Tables (20/20 points)
 
 ---
 
-Additional notes: no comment
+Additional notes: add 2 for getting too many points off due to incorrect group by
