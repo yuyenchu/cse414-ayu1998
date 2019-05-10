@@ -4,4 +4,4 @@ LET M = (SELECT m.name as sea, m.height as height
          FROM hw5.world x2, x2.mondial.sea as m, split(m.`-country`," ") as code
          WHERE y.`-car_code` = code)
 WHERE ARRAY_COUNT(M) = 0
-order by float(y.`-area`);
+order by float(y.`-area`) desc;
