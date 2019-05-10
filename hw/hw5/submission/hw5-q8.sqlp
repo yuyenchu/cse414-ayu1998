@@ -1,7 +1,7 @@
 SELECT y.`-car_code` as country_code, y.name as country_name, y.`-area` as area
 FROM hw5.world x, x.mondial.country as y
-LET M = (SELECT m.name as sea, m.height as height
-         FROM hw5.world x2, x2.mondial.sea as m, split(m.`-country`," ") as code
+LET S = (SELECT s.name as sea
+         FROM hw5.world x2, x2.mondial.sea as s, split(s.`-country`," ") as code
          WHERE y.`-car_code` = code)
-WHERE ARRAY_COUNT(M) = 0
+WHERE ARRAY_COUNT(S) = 0
 order by float(y.`-area`) desc;

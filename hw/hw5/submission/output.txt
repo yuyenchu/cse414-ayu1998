@@ -1,5 +1,5 @@
 {
-	"requestID": "670a2cff-a314-488c-9a59-b9390eb3a72c",
+	"requestID": "ee3b4eba-2816-4a74-b071-aa946ce589bb",
 	"signature": "*",
 	"results": [ {
 		"country_code" : "KAZ",
@@ -186,8 +186,8 @@
 	"plans":{},
 	"status": "success",
 	"metrics": {
-		"elapsedTime": "1.259356819s",
-		"executionTime": "1.258659919s",
+		"elapsedTime": "279.672559ms",
+		"executionTime": "279.249801ms",
 		"resultCount": 45,
 		"resultSize": 3609,
 		"processedObjects": 1
