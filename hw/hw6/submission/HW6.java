@@ -125,8 +125,8 @@ public class HW6 {
   public static JavaRDD<Row> Q2 (SparkSession spark, String dataFile) {
 
     JavaRDD<Row> d = spark.read().parquet(dataFile).javaRDD();
-    JavaRDD<Row> out = d.filter(t -> t.get(DEST_CITY_NAME).equals("Seattle, WA"))
-                        .map(t -> RowFactory.create(t.get(ORIGIN_CITY_NAME)))
+    JavaRDD<Row> out = d.filter(t -> t.get(ORIGIN_CITY_NAME).equals("Seattle, WA"))
+                        .map(t -> RowFactory.create(t.get(DEST_CITY_NAME)))
                         .distinct();
     // System.out.println("question 2: " + out.count());
 
@@ -137,9 +137,9 @@ public class HW6 {
 
     JavaRDD<Row> d = spark.read().parquet(dataFile).javaRDD();
     JavaPairRDD<Tuple2<String, Integer>, Integer> out = 
-      d.mapToPair(t -> new Tuple2<Tuple2<String, Integer>, Integer>(
-                        new Tuple2<String, Integer>((String)t.get(ORIGIN_CITY_NAME), (Integer)t.get(MONTH)), 
-                        (Integer)t.get(CANCELLED) == 0 ? 1 : 0))
+      d.filter(t -> t.get(CANCELLED).equals(0))
+       .mapToPair(t -> new Tuple2<Tuple2<String, Integer>, Integer>(
+                        new Tuple2<String, Integer>((String)t.get(ORIGIN_CITY_NAME), (Integer)t.get(MONTH)), 1))
        .reduceByKey((a, b) -> a + b);
     // System.out.println("question 3: " + out.count());
 
