@@ -138,8 +138,7 @@ public class HW6 {
     JavaRDD<Row> d = spark.read().parquet(dataFile).javaRDD();
     JavaPairRDD<Tuple2<String, Integer>, Integer> out = 
       d.filter(t -> t.get(CANCELLED).equals(0))
-       .mapToPair(t -> new Tuple2<Tuple2<String, Integer>, Integer>(
-                        new Tuple2<String, Integer>((String)t.get(ORIGIN_CITY_NAME), (Integer)t.get(MONTH)), 1))
+       .mapToPair(t -> new Tuple2<>(new Tuple2<>((String)t.get(ORIGIN_CITY_NAME), (Integer)t.get(MONTH)), 1))
        .reduceByKey((a, b) -> a + b);
     // System.out.println("question 3: " + out.count());
 
@@ -150,16 +149,13 @@ public class HW6 {
 
     JavaRDD<Row> d = spark.read().parquet(dataFile).javaRDD();
     Tuple2<String, Tuple2<Integer, Integer>> temp = 
-      d.mapToPair(t -> new Tuple2<Tuple2<String, String>, Integer>(
-                        new Tuple2<String, String>((String)t.get(ORIGIN_CITY_NAME),
+      d.mapToPair(t -> new Tuple2<>(new Tuple2<>((String)t.get(ORIGIN_CITY_NAME),
                           (String)t.get(DEST_CITY_NAME)), 1))
        .reduceByKey((a, b) -> a + b)
-       .mapToPair(t -> new Tuple2<String, Tuple2<Integer, Integer>>(
-                        t._1()._1(), 
-                        new Tuple2<Integer, Integer>(1, t._2())))
-       .reduceByKey((a, b) -> new Tuple2<Integer, Integer>(a._1() + b._1(), a._2() + b._2()))
+       .mapToPair(t -> new Tuple2<>(t._1()._1(), new Tuple2<>(1, t._2())))
+       .reduceByKey((a, b) -> new Tuple2<>(a._1() + b._1(), a._2() + b._2()))
        .reduce((x, y) -> { return x._2()._1() > y._2()._1() ? x : y; });
-    Tuple2<String, Integer> out = new Tuple2<String, Integer>(temp._1(), temp._2._2());
+    Tuple2<String, Integer> out = new Tuple2<>(temp._1(), temp._2._2());
     // System.out.println("question 4: " + out.toString());
 
     return out;
@@ -170,11 +166,10 @@ public class HW6 {
     JavaRDD<Row> d = spark.read().parquet(dataFile).javaRDD();
     JavaPairRDD<String, Double> out = 
       d.filter(t -> t.get(DEP_DELAY) != null)
-       .mapToPair(t -> new Tuple2<String, Tuple2<Integer, Integer>>(
-                        (String)t.get(ORIGIN_CITY_NAME),
-                        new Tuple2<Integer, Integer>((Integer)t.get(DEP_DELAY), 1)))
-       .reduceByKey((a, b) -> new Tuple2<Integer, Integer>(a._1() + b._1(), a._2() + b._2()))
-       .mapToPair(t -> new Tuple2<String, Double>(t._1(), (double) t._2()._1()/t._2()._2()));
+       .mapToPair(t -> new Tuple2<>((String)t.get(ORIGIN_CITY_NAME),
+                        new Tuple2<>((Integer)t.get(DEP_DELAY), 1)))
+       .reduceByKey((a, b) -> new Tuple2<>(a._1() + b._1(), a._2() + b._2()))
+       .mapToPair(t -> new Tuple2<>(t._1(), (double) t._2()._1()/t._2()._2()));
     // System.out.println("question 5: " + out.count());
 
     return out;
