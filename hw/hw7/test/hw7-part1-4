@@ -1,0 +1,7 @@
+R(A,B,C,D)
+1. All sets of attributes are closed.
+    FD: N/A
+2. The only closed sets are {} and {A,B,C,D}.
+    FD: A->B, B->C, C->D, D->A
+3. The only closed sets are {}, {A,B}, and {A,B,C,D}.
+    FD: A->B, B->A, C->D, D->AC
