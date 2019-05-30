@@ -110,6 +110,12 @@ public class QuerySearchOnly
     String jSQLUrl = configProps.getProperty("flightservice.url");
     String jSQLUser = configProps.getProperty("flightservice.sqlazure_username");
     String jSQLPassword = configProps.getProperty("flightservice.sqlazure_password");
+    //String Setting = "jdbc:sqlserver://ayu1998.database.windows.net:1433;database=cse41419sp-ayu1998;user=andrewyu@ayu1998;password=87!!Andrew06;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
+
+    System.out.println(jSQLDriver);
+    System.out.println(jSQLUrl);
+    System.out.println(jSQLUser);
+    System.out.println(jSQLPassword);
 
     /* load jdbc drivers */
     Class.forName(jSQLDriver).newInstance();
@@ -118,6 +124,7 @@ public class QuerySearchOnly
     conn = DriverManager.getConnection(jSQLUrl, // database
             jSQLUser, // user
             jSQLPassword); // password
+    // conn = DriverManager.getConnection(Setting); // setting provided by Azure
 
     conn.setAutoCommit(true); //by default automatically commit after each statement
     /* In the full Query class, you will also want to appropriately set the transaction's isolation level:
