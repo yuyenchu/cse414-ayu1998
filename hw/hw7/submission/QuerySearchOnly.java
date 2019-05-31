@@ -178,7 +178,7 @@ public class QuerySearchOnly
       directFlightSearchStatement.setString(3, destinationCity);
       directFlightSearchStatement.setInt(4, dayOfMonth);
       ResultSet dirResults = directFlightSearchStatement.executeQuery();
-      ArrayList<Flight> dirList = new ArrayList<>();
+      List<Flight> dirList = new ArrayList<>();
       while (dirResults.next()) {
         dirList.add(new Flight(dirResults, 0));
       }
@@ -192,7 +192,7 @@ public class QuerySearchOnly
         indirectFlightSearchStatement.setString(3, destinationCity);
         indirectFlightSearchStatement.setInt(4, dayOfMonth);
         ResultSet indirResults = indirectFlightSearchStatement.executeQuery();
-        ArrayList<Flight2> indirList = new ArrayList<>();
+        List<Flight2> indirList = new ArrayList<>();
         while (indirResults.next()) {
           indirList.add(new Flight2(indirResults));
         }
@@ -210,7 +210,7 @@ public class QuerySearchOnly
 
   }
 
-  private String dirFormat(ArrayList<Flight> list) {
+  private String dirFormat(List<Flight> list) {
     String out = "";
     int count = 0;
     for (Flight f: list) {
@@ -221,7 +221,7 @@ public class QuerySearchOnly
     return out.equals("") ? "No flights match your selection\n" : out;
   }
 
-  private String compareFormat(ArrayList<Flight> dirList, ArrayList<Flight2> indirList, int num) {
+  private String compareFormat(List<Flight> dirList, List<Flight2> indirList, int num) {
     String out = "";
     int count = 0;
     Iterator<Flight> dirIte = dirList.iterator();
