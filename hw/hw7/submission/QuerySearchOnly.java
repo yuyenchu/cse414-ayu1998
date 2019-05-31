@@ -68,7 +68,7 @@ public class QuerySearchOnly
           time = rs.getInt(15+offset);
           capacity = rs.getInt(17+offset);
           price = rs.getInt(18+offset);
-        }
+        } 
       } catch (SQLException e) { e.printStackTrace(); }
   }
 
@@ -170,7 +170,7 @@ public class QuerySearchOnly
   public String transaction_search(String originCity, String destinationCity, boolean directFlight, int dayOfMonth,
                                    int numberOfItineraries)
   {
-    String out = "";
+    List<Flight> dirList = new ArrayList<>();;
     try{
       directFlightSearchStatement.clearParameters();
       directFlightSearchStatement.setInt(1, numberOfItineraries);
@@ -178,36 +178,39 @@ public class QuerySearchOnly
       directFlightSearchStatement.setString(3, destinationCity);
       directFlightSearchStatement.setInt(4, dayOfMonth);
       ResultSet dirResults = directFlightSearchStatement.executeQuery();
-      List<Flight> dirList = new ArrayList<>();
       while (dirResults.next()) {
         dirList.add(new Flight(dirResults, 0));
       }
       dirResults.close();
-      if (dirList.size() >= numberOfItineraries || directFlight) {
-        return dirFormat(dirList);
-      } else {
+    } catch (SQLException e) { 
+        //System.out.println(e);
+        return "Failed to search\n"; 
+    }
+    if (dirList.size() >= numberOfItineraries || directFlight) {
+      return dirFormat(dirList);
+    } else {
+      List<Flight2> indirList = new ArrayList<>();
+      try {
         indirectFlightSearchStatement.clearParameters();
         indirectFlightSearchStatement.setInt(1, numberOfItineraries-dirList.size());
         indirectFlightSearchStatement.setString(2, originCity);
         indirectFlightSearchStatement.setString(3, destinationCity);
         indirectFlightSearchStatement.setInt(4, dayOfMonth);
         ResultSet indirResults = indirectFlightSearchStatement.executeQuery();
-        List<Flight2> indirList = new ArrayList<>();
         while (indirResults.next()) {
           indirList.add(new Flight2(indirResults));
         }
         indirResults.close();
-        if (indirList.size() == 0) {
-          return dirFormat(dirList);
-        } else {
-          return compareFormat(dirList, indirList, numberOfItineraries);
-        }
-      } 
-    } catch (SQLException e) { 
-      //System.out.println(e);
-      return "Failed to search\n"; 
-    }
-
+      } catch (SQLException e) { 
+        //System.out.println(e);
+        return "Failed to search\n"; 
+      }
+      if (indirList.size() == 0) {
+        return dirFormat(dirList);
+      } else {
+        return compareFormat(dirList, indirList, numberOfItineraries);
+      }
+    } 
   }
 
   private String dirFormat(List<Flight> list) {
