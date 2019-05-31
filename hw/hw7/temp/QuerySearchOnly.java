@@ -21,8 +21,8 @@ public class QuerySearchOnly
                                                     +"AND day_of_month = ? AND canceled = 0 "
                                                     +"ORDER BY actual_time ASC, fid ASC";
   private static final String INDIRECT_FLIGHT_SEARCH = "SELECT TOP (?) f1.*, f2.* "
-                                                      +"FROM Flights as f1, Flights as f2 "
-                                                      +"WHERE f1.origin_city = ? AND f2.dest_city = ? AND f2.origin_city = f1.dest_city "
+                                                      +"FROM Flights f1, Flights f2 "
+                                                      +"WHERE f1.origin_city = ? AND f2.dest_city = ? AND f2.origin_city = f1.dest_city"
                                                       +"AND f1.day_of_month = ? AND f2.day_of_month = f1.day_of_month AND f1.canceled = 0 "
                                                       +"AND f2.canceled = 0 "
                                                       +"ORDER BY f1.actual_time+f2.actual_time ASC, f1.fid ASC, f2.fid ASC";
@@ -97,6 +97,8 @@ public class QuerySearchOnly
     String jSQLUser = configProps.getProperty("flightservice.sqlazure_username");
     String jSQLPassword = configProps.getProperty("flightservice.sqlazure_password");
     //String Setting = "jdbc:sqlserver://ayu1998.database.windows.net:1433;database=cse41419sp-ayu1998;user=andrewyu@ayu1998;password=87!!Andrew06;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
+
+    System.out.println(jSQLUrl);
 
     /* load jdbc drivers */
     Class.forName(jSQLDriver).newInstance();
@@ -187,7 +189,7 @@ public class QuerySearchOnly
         return dirFormat(dirList);
       } else {
         indirectFlightSearchStatement.clearParameters();
-        indirectFlightSearchStatement.setInt(1, numberOfItineraries-dirList.size());
+        indirectFlightSearchStatement.setInt(1, numberOfItineraries);
         indirectFlightSearchStatement.setString(2, originCity);
         indirectFlightSearchStatement.setString(3, destinationCity);
         indirectFlightSearchStatement.setInt(4, dayOfMonth);
@@ -204,7 +206,6 @@ public class QuerySearchOnly
         }
       } 
     } catch (SQLException e) { 
-      //System.out.println(e);
       return "Failed to search\n"; 
     }
 
@@ -238,27 +239,27 @@ public class QuerySearchOnly
         temp1 = dirIte.hasNext() ? dirIte.next() : null;
       } else {
         if (temp1.time < temp2._1.time + temp2._2.time) {
-	  out += direct(temp1);
           temp1 = dirIte.hasNext() ? dirIte.next() : null;
+          out += direct(temp1);
         } else if (temp1.time == temp2._1.time + temp2._2.time) {
           if (temp1.fid < temp2._1.fid) {
-	    out += direct(temp1);
             temp1 = dirIte.hasNext() ? dirIte.next() : null;
+            out += direct(temp1);
           } else if (temp1.fid == temp2._1.fid) {
             if (temp1.fid < temp2._2.fid) {
-	      out += direct(temp1);
               temp1 = dirIte.hasNext() ? dirIte.next() : null;
+              out += direct(temp1);
             } else { 
-	      out += indirect(temp2);
               temp2 = indirIte.hasNext() ? indirIte.next() : null;
+              out += indirect(temp2);
             }
           } else {
-	    out += indirect(temp2);
             temp2 = indirIte.hasNext() ? indirIte.next() : null;
+            out += indirect(temp2);
           }
         } else {
-	  out += indirect(temp2);
           temp2 = indirIte.hasNext() ? indirIte.next() : null;
+          out += indirect(temp2);
         }
       }
       count++;

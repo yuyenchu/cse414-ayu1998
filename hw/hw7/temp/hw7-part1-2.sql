@@ -1,40 +1,24 @@
-DROP TABLE IF EXISTS InsuranceCo;
-DROP TABLE IF EXISTS Person;
-DROP TABLE IF EXISTS Driver;
-DROP TABLE IF EXISTS NonProfessionalDriver;
-DROP TABLE IF EXISTS ProfessionalDriver;
-DROP TABLE IF EXISTS Vehicle;
-DROP TABLE IF EXISTS Car;
-DROP TABLE IF EXISTS Truck;
-DROP TABLE IF EXISTS Drives;
-
 CREATE TABLE InsuranceCo(
-    iName varchar(30) PRIMARY KEY,
+    name varchar(30) PRIMARY KEY,
     phone int
 );
 
 CREATE TABLE Person(
-    SSN NUMBER PRIMARY KEY,
+    SSN int PRIMARY KEY,
     name varchar(30)
 );  
 
 CREATE TABLE Driver(
-    SSN NUMBER PRIMARY KEY
-        CHECK(licensePlate IN (select Person.SSN 
-                               from Person)),
-    dirverID NUMBER
+    SSN int PRIMARY KEY REFERENCES Person(SSN),
+    dirverID int
 );
 
 CREATE TABLE NonProfessionalDriver(
-    SSN NUMBER PRIMARY KEY
-        CHECK(licensePlate IN (select Driver.SSN 
-                               from Driver)),
+    SSN int PRIMARY KEY REFERENCES Person(SSN)
 );
 
 CREATE TABLE ProfessionalDriver(
-    SSN NUMBER PRIMARY KEY
-        CHECK(licensePlate IN (select Driver.SSN 
-                               from Driver)),
+    SSN int PRIMARY KEY REFERENCES Person(SSN),
     medicalHistory varchar(100)
 );
 
@@ -43,27 +27,23 @@ CREATE TABLE Vehicle(
     year int,
     maxLiability REAL,
     iName varchar(30) REFERENCES InsuranceCo(name),
-    pSSN NUMBER REFERENCES Person(SSN)
+    pSSN int REFERENCES Person(SSN)
 );
 
 CREATE TABLE Car(
-    licensePlate varchar(9) PRIMARY KEY
-        CHECK(licensePlate IN (select Vehicle.licensePlate 
-                               from Vehicle)),
+    licensePlate varchar(9) PRIMARY KEY REFERENCES Vehicle(licensePlate),
     make varchar(30)
 );
 
 CREATE TABLE Truck(
-    licensePlate varchar(9) PRIMARY KEY
-        CHECK(licensePlate IN (select Vehicle.licensePlate 
-                               from Vehicle)),
+    licensePlate varchar(9) PRIMARY KEY REFERENCES Vehicle(licensePlate),
     capacity int,
-    pdSSN NUMBER REFERENCES ProfessionalDriver(SSN)
+    pdSSN int REFERENCES ProfessionalDriver(SSN)
 );
 
 CREATE TABLE Drives(
     licensePlate varchar(9) REFERENCES Car(licensePlate),
-    npdSSN NUMBER REFERENCES NonProfessionalDriver(SSN),
+    npdSSN int REFERENCES NonProfessionalDriver(SSN),
     PRIMARY KEY(licensePlate, npdSSN)
 );
 
