@@ -36,5 +36,5 @@ Part d: 10/10 points
 ## Total: 86 / 100
 
 ### Additional notes:  
-
+-7 Missing Commented output columns for queries
 
