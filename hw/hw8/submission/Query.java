@@ -3,7 +3,7 @@ import java.util.ArrayList;
 
 public class Query extends QuerySearchOnly {
 	//debug mode
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = false;
 
 	// Logged In User
 	private String username; // customer username is unique
