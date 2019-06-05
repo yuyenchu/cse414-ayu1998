@@ -1,0 +1,14 @@
+# user1
+create user1 user1 10000
+login user1 user1
+create user1 user2 10
+quit
+*
+#
+# expected printouts for user 1
+#
+Created user user1
+Logged in as user1
+Failed to create user
+Goodbye
+*

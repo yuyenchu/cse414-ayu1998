@@ -3,7 +3,7 @@ import java.util.ArrayList;
 
 public class Query extends QuerySearchOnly {
 	//debug mode
-	private static final boolean DEBUG = false;
+	private static final boolean DEBUG = true;
 
 	// Logged In User
 	private String username; // customer username is unique
@@ -36,8 +36,11 @@ public class Query extends QuerySearchOnly {
 	private static final String UPDATE_RID_SQL = "UPDATE RID SET id = ? WHERE id = ?;";
 	protected PreparedStatement updateRidStatement;
 
-	private static final String UPDATE_RESERVATION_SQL = "UPDATE Reservation SET canceled = 1 WHERE id = ?;";
-	protected PreparedStatement updateReservationStatement;
+	private static final String UPDATE_RESERVATION_CANCEL_SQL = "UPDATE Reservations SET canceled = 1 WHERE rid = ?;";
+	protected PreparedStatement updateReservationCancelStatement;
+
+	private static final String UPDATE_RESERVATION_PAID_SQL = "UPDATE Reservations SET paid = 1 WHERE rid = ?;";
+	protected PreparedStatement updateReservationPaidStatement;
 
 	private static final String CHECK_USERNAME_SQL = "SELECT COUNT(*) FROM Users WHERE username = ? COLLATE SQL_Latin1_General_CP1_CI_AS;";
 	protected PreparedStatement checkUserameStatement;
@@ -47,11 +50,11 @@ public class Query extends QuerySearchOnly {
 	protected PreparedStatement checkLoginStatement;
 
 	private static final String CHECK_UNPAID_RESERVATION_SQL = "SELECT COUNT(*) FROM Reservations WHERE rid = ? "
-													  		 + "AND uname = ? AND paid = 0 COLLATE SQL_Latin1_General_CP1_CI_AS;";
+													  		 + "AND uname = ? COLLATE SQL_Latin1_General_CP1_CI_AS AND paid = 0;";
 	protected PreparedStatement checkUnpaidReservationStatement;
 
 	private static final String CHECK_NOT_CANCELED_SQL = "SELECT COUNT(*) FROM Reservations WHERE rid = ? "
-													   + "AND uname = ? AND canceled = 0 COLLATE SQL_Latin1_General_CP1_CI_AS;";
+													   + "AND uname = ? COLLATE SQL_Latin1_General_CP1_CI_AS AND canceled = 0;";
 	protected PreparedStatement checkNotCanceledReservationStatement;
 
 	private static final String CHECK_TRAVEL_SQL = "SELECT COUNT(*) FROM Travel WHERE month_id = ? "
@@ -62,12 +65,12 @@ public class Query extends QuerySearchOnly {
 												  		+ "OR (flight2 IS NOT NULL AND flight2 = ?);";
 	protected PreparedStatement getNumReservationsStatement;
 
-	private static final String GET_RESERVATIONS_SQL = "SELECT * FROM Reservations WHERE uname = ? AND canceled = 0"
-													 + "COLLATE SQL_Latin1_General_CP1_CI_AS ORDER BY rid ASC;";
+	private static final String GET_RESERVATIONS_SQL = "SELECT * FROM Reservations WHERE uname = ? COLLATE SQL_Latin1_General_"
+													 + "CP1_CI_AS AND canceled = 0 ORDER BY rid ASC;";
 	protected PreparedStatement getReservationsStatement;
 
-	private static final String GET_RESERVATION_SQL = "SELECT * FROM Reservations WHERE uname = ? WHERE rid = ? "
-													+ "COLLATE SQL_Latin1_General_CP1_CI_AS;";
+	private static final String GET_RESERVATION_SQL = "SELECT * FROM Reservations WHERE uname = ? COLLATE SQL_Latin1_General_CP1_CI_AS "
+													+ "AND rid = ?;";
 	protected PreparedStatement getReservationStatement;
 
 	private static final String GET_FLIGHT_SQL = "SELECT * FROM Flights WHERE fid = ?";
@@ -92,7 +95,7 @@ public class Query extends QuerySearchOnly {
 
 	public Query(String configFilename) {
 		super(configFilename);
-		username = null;
+		this.username = null;
 	}
 
 
@@ -140,7 +143,9 @@ public class Query extends QuerySearchOnly {
 		//update statements
 		updateBalanceStatement = conn.prepareStatement(UPDATE_BALANCE_SQL);
 		updateRidStatement = conn.prepareStatement(UPDATE_RID_SQL);
-		updateReservationStatement = conn.prepareStatement(UPDATE_RESERVATION_SQL);
+		updateReservationCancelStatement = conn.prepareStatement(UPDATE_RESERVATION_CANCEL_SQL);
+		updateReservationPaidStatement = conn.prepareStatement(UPDATE_RESERVATION_PAID_SQL);
+		//get statements
 		//get statements
 		getReservationsStatement = conn.prepareStatement(GET_RESERVATIONS_SQL);
 		getFlightStatement = conn.prepareStatement(GET_FLIGHT_SQL);
@@ -169,7 +174,7 @@ public class Query extends QuerySearchOnly {
 			return "User already logged in\n";
 		}
 		if (username == null || password == null || username.isEmpty() || password.isEmpty()) {
-			return "Login failed\n";
+			return "Login failed\n" + (DEBUG ? "1\n" : "");
 		}
 		try {
 			if (checkLogin(username, password)) {
@@ -177,13 +182,13 @@ public class Query extends QuerySearchOnly {
 				itineraries = new ArrayList<>();
 				return "Logged in as " + username + "\n";
 			} else {
-				return "Login failed\n";
+				return "Login failed\n" + (DEBUG ? "2\n" : "");
 			}
 		} catch (Exception e) {
 			if (DEBUG) {
 				e.printStackTrace();
 			}
-			return "Login failed\n";
+			return "Login failed\n" + (DEBUG ? "3\n" : "");
 		}
 	}
 
@@ -199,7 +204,7 @@ public class Query extends QuerySearchOnly {
 	public String transaction_createCustomer (String username, String password, int initAmount)
 	{
 		if (username == null || password == null || username.isEmpty() || password.isEmpty() || initAmount < 0) {
-			return "Failed to create user1";
+			return "Failed to create user\n" + (DEBUG ? "1\n" : "");
 		}
 		try {
 			beginTransaction();
@@ -209,14 +214,14 @@ public class Query extends QuerySearchOnly {
 				return "Created user " + username + "\n";
 			} else {
 				rollbackTransaction();
-				return "Failed to create user";
+				return "Failed to create user\n" + (DEBUG ? "2\n" : "");
 			}
 		} catch (Exception e) {
 			if (DEBUG) {
 				e.printStackTrace();
 			}
 			rollbackTransaction();
-			return "Failed to create user";
+			return "Failed to create user\n" + (DEBUG ? "3\n" : "");
 		}
 	}
 
@@ -252,7 +257,7 @@ public class Query extends QuerySearchOnly {
 				return "You cannot book two flights in the same day\n";
 			} else if (f1.capacity <= getNumReservations(f1.fid) || (f2 != null && f2.capacity <= getNumReservations(f2.fid))) {
 				rollbackTransaction();
-				return "Booking failed\n";
+				return "Booking failed\n" + (DEBUG ? "1\n" : "");
 			}
 			int id = insertReservation(f1, f2);
 			insertTravel(f1.month, f1.dayOfMonth);
@@ -266,7 +271,7 @@ public class Query extends QuerySearchOnly {
 				e.printStackTrace();
 			}
 			rollbackTransaction();
-			return "Booking failed\n";
+			return "Booking failed\n" + (DEBUG ? "2\n" : "");
 		}
 	}
 
@@ -292,7 +297,7 @@ public class Query extends QuerySearchOnly {
 		} 
 		try {
 			beginTransaction();
-			if (!checkUnpaidReservation(reservationId)) {
+			if (!checkUnpaidReservation(reservationId) || !checkNotCanceledReservation(reservationId)) {
 				rollbackTransaction();
 				return "Cannot find unpaid reservation " + reservationId + " under user: " + this.username + "\n";
 			} 
@@ -308,6 +313,8 @@ public class Query extends QuerySearchOnly {
 			}
 			balance -= result.getInt(7);
 			updateBalance(balance);
+			payReservation(result.getInt(1));
+			result.close();
 			commitTransaction();
 			return "Paid reservation: " + reservationId + " remaining balance: " + balance + "\n";
 		} catch (Exception e) {
@@ -342,6 +349,9 @@ public class Query extends QuerySearchOnly {
 	 */
 	public String transaction_reservations()
 	{
+		if (this.username == null) {
+			return "Cannot view reservations, not logged in\n";
+		}
 		String out = "";
 		try {
 			getReservationsStatement.clearParameters();
@@ -354,7 +364,7 @@ public class Query extends QuerySearchOnly {
 					out += getFlight(result.getInt(4)).toString() + "\n";
 				}
 			}
-			return out;
+			return out.equals("") ? "No reservations found\n" : out;
 		} catch (Exception e) {
 			if (DEBUG) {
 				e.printStackTrace();
@@ -385,18 +395,18 @@ public class Query extends QuerySearchOnly {
 		try {
 			beginTransaction();
 			if (checkNotCanceledReservation(reservationId)){
-				updateReservation(reservationId);
+				cancelReservation(reservationId);
 				commitTransaction();
 				return "Canceled reservation " + reservationId + "\n";
 			} 
 			rollbackTransaction();
-			return "Failed to cancel reservation " + reservationId + "\n";
+			return "Failed to cancel reservation " + reservationId + "\n" + (DEBUG ? "1\n" : "");
 		} catch (Exception e) {
 			if (DEBUG) {
 				e.printStackTrace();
 			}
 			rollbackTransaction();
-			return "Failed to cancel reservation " + reservationId + "\n";
+			return "Failed to cancel reservation " + reservationId + "\n" + (DEBUG ? "2\n" : "");
 		}
 	}
 
@@ -430,11 +440,12 @@ public class Query extends QuerySearchOnly {
 		checkUserameStatement.clearParameters();
 		checkUserameStatement.setString(1, name);
 		ResultSet result = checkUserameStatement.executeQuery();
+		result.next();
 		boolean out = result.getInt(1) == 1;
-		result.close();
 		if (DEBUG) {
-			System.out.println("checkUserame: "+result.getInt(1));
+			System.out.println("checkUserame: "+result.getInt(1)+"\n");
 		}
+		result.close();
 		return out;
 	}
 	
@@ -443,11 +454,12 @@ public class Query extends QuerySearchOnly {
 		checkLoginStatement.setString(1, name);
 		checkLoginStatement.setString(2, password);
 		ResultSet result = checkLoginStatement.executeQuery();
+		result.next();
 		boolean out = result.getInt(1) == 1;
-		result.close();
 		if (DEBUG) {
-			System.out.println("checkLogin:"+result.getInt(1));
+			System.out.println("checkLogin:"+result.getInt(1)+"\n");
 		}
+		result.close();
 		return out;
 	}
 
@@ -458,10 +470,10 @@ public class Query extends QuerySearchOnly {
 		ResultSet result = checkUnpaidReservationStatement.executeQuery();
 		result.next();
 		boolean out = result.getInt(1) == 1;
-		result.close();
 		if (DEBUG) {
-			System.out.println("checkUnpaidReservation: "+result.getInt(1));
+			System.out.println("checkUnpaidReservation: "+result.getInt(1)+"\n");
 		}
+		result.close();
 		return out;
 	}
 
@@ -473,10 +485,10 @@ public class Query extends QuerySearchOnly {
 		ResultSet result = checkTravelStatement.executeQuery();
 		result.next();
 		boolean out = result.getInt(1) == 1;
-		result.close();
 		if (DEBUG) {
-			System.out.println("checkTravel: "+result.getInt(1));
+			System.out.println("checkTravel: "+result.getInt(1)+"\n");
 		}
+		result.close();
 		return out;
 	}
 
@@ -487,10 +499,10 @@ public class Query extends QuerySearchOnly {
 		ResultSet result = checkNotCanceledReservationStatement.executeQuery();
 		result.next();
 		boolean out = result.getInt(1) == 1;
-		result.close();
 		if (DEBUG) {
-			System.out.println("checkNotCanceledReservation: "+result.getInt(1));
+			System.out.println("checkNotCanceledReservation: "+result.getInt(1)+"\n");
 		}
+		result.close();
 		return out;
 	}
 
@@ -513,6 +525,7 @@ public class Query extends QuerySearchOnly {
 	private int insertReservation(Flight f1, Flight f2) throws SQLException {
 		insertReservationStatement.clearParameters();
 		int id = getRID();
+		updateRID(id + 1);
 		insertReservationStatement.setInt(1, id+1);
 		insertReservationStatement.setString(2, this.username);
 		insertReservationStatement.setInt(3, f1.fid);
@@ -525,7 +538,6 @@ public class Query extends QuerySearchOnly {
 		insertReservationStatement.setInt(6, 0);
 		insertReservationStatement.setInt(7, f2 != null ? f1.price + f2.price : f1.price);
 		insertReservationStatement.executeUpdate();
-		updateRID(id + 1);
 		return id + 1;
 	}
 
@@ -534,8 +546,14 @@ public class Query extends QuerySearchOnly {
 		if (result.next()) {
 			int out = result.getInt(1);
 			result.close();
+			if (DEBUG) {
+				System.out.println("getRID: "+out+"\n");
+			}
 			return out;
 		} else {
+			if (DEBUG) {
+				System.out.println("getRID: "+0+"\n");
+			}
 			return 0;
 		}
 	}
@@ -545,7 +563,7 @@ public class Query extends QuerySearchOnly {
 		getBalanceStatement.setString(1, this.username);
 		ResultSet result = getBalanceStatement.executeQuery();
 		result.next();
-		int out = result.getInt(3);
+		int out = result.getInt(1);
 		result.close();
 		return out;
 	}
@@ -579,20 +597,23 @@ public class Query extends QuerySearchOnly {
 	}
 
 	private void updateRID(int id) throws SQLException {
-		if (id == 1) {
+		if (id <= 1) {
 			insertRidStatement.executeUpdate();
 		} else {
 			updateRidStatement.clearParameters();
-			updateRidStatement.setInt(1, id - 1);
-			updateRidStatement.setInt(2, id);
+			updateRidStatement.setInt(1, id);
+			updateRidStatement.setInt(2, id - 1);
 			updateRidStatement.executeUpdate();
+			if (DEBUG) {
+				System.out.println("updateRID: "+id+"\n");
+			}
 		}
 	}
 
-	private void updateReservation(int id) throws SQLException {
-		updateReservationStatement.clearParameters();
-		updateReservationStatement.setInt(1, id);
-		updateRidStatement.executeUpdate();
+	private void cancelReservation(int id) throws SQLException {
+		updateReservationCancelStatement.clearParameters();
+		updateReservationCancelStatement.setInt(1, id);
+		updateReservationCancelStatement.executeUpdate();
 		getReservationStatement.clearParameters();
 		getReservationStatement.setString(1, this.username);
 		getReservationStatement.setInt(2, id);
@@ -604,6 +625,12 @@ public class Query extends QuerySearchOnly {
 			Flight f2 = getFlight(result.getInt(4));
 			deleteTravel(f2.month, f2.dayOfMonth);
 		}
+	}
+
+	private void payReservation(int id) throws SQLException {
+		updateReservationPaidStatement.clearParameters();
+		updateReservationPaidStatement.setInt(1, id);
+		updateReservationPaidStatement.executeUpdate();
 	}
 
 	private void deleteTravel(int month, int day) throws SQLException {
