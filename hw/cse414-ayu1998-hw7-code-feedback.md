@@ -2,6 +2,10 @@
 
 ### Summary
 
-- Tests run:        11
-- Tests passed:     <span style="background-color:green">11</span>
-- Tests failed:     <span style="background-color:green">0</span>
+- Tests run: 11
+- Tests passed: 11
+- Tests failed: 0
+
+### Comments
+
+
