@@ -1,0 +1,11 @@
+--select * from Users;
+--select * from RID;
+--select * from Reservations;
+--UPDATE RID SET id = 2 WHERE id = 1;
+--UPDATE Reservations SET paid = 0 WHERE rid = 3;
+--UPDATE Users SET balance = 10000 WHERE username = 'user1';
+--select top(3)* from Flights where capacity > 0 order by capacity asc, fid asc;
+--DELETE FROM Reservations;
+--DELETE FROM Travel;
+--DELETE FROM Users;
+--DELETE FROM RID;
